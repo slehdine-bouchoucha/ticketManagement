@@ -27,26 +27,29 @@ export const FirstLogin = () => {
     }, 1000);
   }, []);
 
-  const token = window.localStorage.getItem("token");
+  const registeredEmail = window.localStorage.getItem("registeredEmail");
 
-  if (token) {
-    navigate("/");
+  if (!registeredEmail) {
+    window.localStorage.clear();
+    navigate("/login");
   }
 
   const onFinish = async (values) => {
     try {
       const userEmail = localStorage.getItem("registeredEmail");
-      const user = await Axios.post("/verifyOtp", {
+      const user = await Axios.post("/user/verifyOtp", {
         email: userEmail,
         otp: otp,
       });
       window.localStorage.setItem("token", user.data.token);
       window.localStorage.setItem("user", JSON.stringify(user.data.user));
       window.localStorage.setItem("user_id", user.data.user._id);
-      navigate("/", { replace: true });
+      setTimeout(() => {
+        navigate("/", { replace: true });
+      }, 1000);
     } catch (error) {
       alert(error.response.data.message);
-      console.log(error);
+      console.log(error.response.data);
     }
   };
 

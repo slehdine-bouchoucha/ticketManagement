@@ -12,9 +12,8 @@ import { useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
-const AppLayout = ({ children }) => {
+const AdminLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
-  const user = JSON.parse(window.localStorage.getItem("user") || "{}");
   const navigate = useNavigate();
   const {
     token: { colorBgContainer },
@@ -35,44 +34,6 @@ const AppLayout = ({ children }) => {
 
   const path = window.location.pathname;
 
-  let items = [
-    {
-      key: "/",
-      icon: <UserOutlined />,
-      label: "Home",
-    },
-    {
-      key: "/createTicket",
-      icon: <UploadOutlined />,
-      label: "Add Ticket",
-    },
-    {
-      key: "/ticketList",
-      icon: <VideoCameraOutlined />,
-      label: "See Tickets",
-    },
-  ];
-
-  if (user.role === "ADMIN") {
-    items = [
-      {
-        key: "/add-user",
-        icon: <VideoCameraOutlined />,
-        label: "Home",
-      },
-      {
-        key: "/displayUsers",
-        icon: <VideoCameraOutlined />,
-        label: "Display Users",
-      },
-      {
-        key: "/History_Users",
-        icon: <VideoCameraOutlined />,
-        label: "History Users",
-      },
-    ];
-  }
-
   return (
     <Layout style={{ width: "100vw", height: "100vh" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -83,7 +44,21 @@ const AppLayout = ({ children }) => {
           defaultSelectedKeys={[path]}
           onClick={({ key }) => handleMenuItemClick(key)}
           items={[
-            ...items,
+            {
+              key: "/",
+              icon: <UserOutlined />,
+              label: "Home",
+            },
+            {
+              key: "/createTicket",
+              icon: <UploadOutlined />,
+              label: "Add Agent",
+            },
+            {
+              key: "/ticketList",
+              icon: <VideoCameraOutlined />,
+              label: "See Agents",
+            },
             {
               key: "logout",
               icon: <LogoutOutlined />,
@@ -125,4 +100,4 @@ const AppLayout = ({ children }) => {
   );
 };
 
-export default AppLayout;
+export default AdminLayout;

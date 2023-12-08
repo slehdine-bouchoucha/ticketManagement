@@ -27,9 +27,10 @@ export const TicketCreationPage = () => {
     });
 
     try {
-      const response = await Axios.post("/createTicket", formData, {
+      const response = await Axios.post("/tickets", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          "authorization":window.localStorage.getItem("token")
         },
       });
       console.log("Ticket created:", response.data.ticket);

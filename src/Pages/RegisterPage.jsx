@@ -23,13 +23,12 @@ export const RegisterPage = () => {
 
   const onFinish = async () => {
     try {
-      const user = await Axios.post("/register", {
+      const user = await Axios.post("/user/register", {
         email,
         password,
         userName,
         fullName,
       });
-      console.log(user);
       const { email: userEmail, otpauth_url: otpAuthUrl } = user.data.user;
       localStorage.setItem("registeredEmail", userEmail);
       localStorage.setItem("otpAuthUrl", otpAuthUrl);

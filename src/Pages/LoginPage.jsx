@@ -17,7 +17,7 @@ export const LoginPage = () => {
 
   const onFinish = async (values) => {
     try {
-      const user = await Axios.post("/login", {
+      const user = await Axios.post("/user/login", {
         email: values.username,
         password: values.password,
         otp: values.otp,
@@ -27,8 +27,20 @@ export const LoginPage = () => {
       window.localStorage.setItem("user_id", user.data.user._id);
       navigate("/", { replace: true });
     } catch (error) {
-      alert(error.response.data.message);
-      console.log(error);
+      console.log(error.response?.data);
+
+      if (error.response?.data?.message === "FIRST_TIME_LOGIN") {
+        const { email: userEmail, otpauth_url: otpAuthUrl } =
+          error.response?.data?.user;
+        localStorage.setItem("registeredEmail", userEmail);
+        localStorage.setItem("otpAuthUrl", otpAuthUrl);
+
+        setTimeout(() => {
+          navigate("/firstLog", { replace: true });
+        }, 1000);
+      } else {
+        alert(error.response?.data?.message);
+      }
     }
   };
 
