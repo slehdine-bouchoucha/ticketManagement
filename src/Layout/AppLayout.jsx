@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import {
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
-  LogoutOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Layout, Menu, Button, theme } from "antd";
+import { Button, Layout, Menu, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
@@ -55,10 +55,11 @@ const AppLayout = ({ children }) => {
 
   if (user.role === "ADMIN") {
     items = [
+      ...items,
       {
         key: "/add-user",
         icon: <VideoCameraOutlined />,
-        label: "Home",
+        label: "Add User",
       },
       {
         key: "/displayUsers",
@@ -95,8 +96,11 @@ const AppLayout = ({ children }) => {
       <Layout>
         <Header
           style={{
-            padding: 0,
             background: colorBgContainer,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "0 16px",
           }}
         >
           <Button
@@ -109,6 +113,13 @@ const AppLayout = ({ children }) => {
               height: 64,
             }}
           />
+
+          <div style={{ marginRight: 16 }}>
+            <p style={{ margin: 0, fontWeight: "bold" }}>
+              <UserOutlined />
+              {user.userName}
+            </p>
+          </div>
         </Header>
         <Content
           style={{
@@ -116,6 +127,7 @@ const AppLayout = ({ children }) => {
             padding: 24,
             minHeight: 280,
             background: colorBgContainer,
+            overflow: "scroll",
           }}
         >
           {children}

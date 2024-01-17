@@ -19,19 +19,22 @@ export const FirstLogin = () => {
   const [otp, setOtp] = useState("");
 
   useEffect(() => {
-    setInterval(() => {
+    setTimeout(() => {
       const otpAuthUrl = localStorage
         .getItem("otpAuthUrl")
         ?.replace("&algorithm=SHA512", "");
       setUrlOtp(otpAuthUrl);
-    }, 1000);
+    }, 2000);
   }, []);
 
   const registeredEmail = window.localStorage.getItem("registeredEmail");
 
   if (!registeredEmail) {
-    window.localStorage.clear();
-    navigate("/login");
+    setTimeout(() => {
+      window.localStorage.clear();
+      navigate("/login");
+    }, 2000);
+
   }
 
   const onFinish = async (values) => {
@@ -46,7 +49,7 @@ export const FirstLogin = () => {
       window.localStorage.setItem("user_id", user.data.user._id);
       setTimeout(() => {
         navigate("/", { replace: true });
-      }, 1000);
+      }, 3000);
     } catch (error) {
       alert(error.response.data.message);
       console.log(error.response.data);

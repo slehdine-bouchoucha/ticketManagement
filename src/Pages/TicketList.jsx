@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Tag, Typography, Spin, Popconfirm } from "antd";
+import { Button, Card, Popconfirm, Spin, Tag, Typography } from "antd";
 import { Axios } from "../Config/axios";
 import { LogoutOutlined } from "@ant-design/icons";
 import AppLayout from "../Layout/AppLayout";
+import { Link } from "react-router-dom";
+
 const { Title } = Typography;
 export const TicketList = () => {
   const [tickets, setTickets] = useState(null);
@@ -38,11 +40,24 @@ export const TicketList = () => {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const response = await Axios.get(`/tickets`, {
-          headers: {
-            authorization: window.localStorage.getItem("token"),
-          },
-        });
+        const userString = localStorage.getItem("user");
+        const user = JSON.parse(userString);
+        let response;
+
+        if (user.role === "agent") {
+          response = await Axios.get(`/agent/${user.departement}`, {
+            headers: {
+              authorization: window.localStorage.getItem("token"),
+            },
+          });
+        } else {
+          response = await Axios.get(`/tickets`, {
+            headers: {
+              authorization: window.localStorage.getItem("token"),
+            },
+          });
+        }
+
         setTickets(response.data.userTickets);
       } catch (error) {
         console.error("Error fetching tickets:", error);
@@ -52,7 +67,7 @@ export const TicketList = () => {
     if (userId) {
       fetchTickets();
     }
-  }, []);
+  }, [userId]);
 
   return (
     <AppLayout>
@@ -75,6 +90,7 @@ export const TicketList = () => {
                     onConfirm={() => handleTicketClose(ticket._id)}
                     okText="Yes"
                     cancelText="No"
+                    data-testid={`cancel-ticket-popover-${ticket._id}`} // Add a unique data attribute here
                   >
                     <LogoutOutlined
                       style={{ fontSize: "24px", color: "red" }}
@@ -99,8 +115,8 @@ export const TicketList = () => {
                       ticket.status === "IN PROGRESS"
                         ? "yellow"
                         : ticket.status === "CLOSED"
-                        ? "red"
-                        : "green",
+                          ? "red"
+                          : "green",
                     marginRight: 8,
                   }}
                 />
@@ -109,15 +125,15 @@ export const TicketList = () => {
                     ticket.status === "IN PROGRESS"
                       ? "yellow"
                       : ticket.status === "CLOSED"
-                      ? "red"
-                      : "green"
+                        ? "red"
+                        : "green"
                   }
                 >
                   {ticket.status}
                 </Tag>
               </div>
               <Button type="primary" style={{ marginTop: "10px" }}>
-                See Details
+                <Link to={"/ticket/" + ticket["_id"]}>See Details </Link>
               </Button>
             </Card>
           ))

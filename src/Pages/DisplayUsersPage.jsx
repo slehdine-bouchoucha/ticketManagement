@@ -8,7 +8,9 @@ const { Option } = Select;
 
 const DisplayUsersPage = () => {
   const [userData, setUserData] = useState([]);
-  const [userDep, setUserDep] = useState("");
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -27,19 +29,21 @@ const DisplayUsersPage = () => {
     fetchUsers();
   }, []);
 
-  const handleUpdate = async (text, record) => {
-    //Call API
+  const handelRole = (text, record) => {
+    setUserRole(text);
     setUserData((prev) => {
       return prev.map((user) => {
         return user["_id"] === record["_id"] ? { ...user, role: text } : user;
       });
     });
+  };
+  const handleUpdate = async (text, record) => {
     try {
       await Axios.put(
         "/admin",
         {
-          role: text,
-          dep: userDep,
+          role: userRole,
+          dep: text,
           userId: record["_id"],
         },
         {
@@ -56,8 +60,23 @@ const DisplayUsersPage = () => {
     }
   };
 
-  const handleDelete = (record) => {
-    message.error(`Delete action for ${record.name}`);
+  const handleDelete = async (record) => {
+    try {
+      await Axios.delete("/admin", {
+        data: { userId: record["_id"] },
+        headers: {
+          authorization: window.localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        },
+      });
+      const updatedUserData = userData.filter(
+        (user) => user._id !== record._id
+      );
+      setUserData(updatedUserData);
+      message.success(`Delete action for ${record.userName}`);
+    } catch (error) {
+      message.error(`you cant delete an ADMIN`);
+    }
   };
 
   const columns = [
@@ -84,7 +103,7 @@ const DisplayUsersPage = () => {
         <Select
           defaultValue={text}
           style={{ width: 120 }}
-          onChange={(value) => handleUpdate(value, record)}
+          onChange={(value) => handelRole(value, record)}
         >
           <Option value="user">User</Option>
           <Option value="agent">Agent</Option>
@@ -93,7 +112,7 @@ const DisplayUsersPage = () => {
     },
     {
       title: "Department",
-      dataIndex: "department",
+      dataIndex: "departement",
       key: "department",
       render: (text, record) => {
         if (record.role === "agent") {
@@ -101,11 +120,11 @@ const DisplayUsersPage = () => {
             <Select
               defaultValue={text}
               style={{ width: 120 }}
-              onChange={(value) => setUserDep(value)}
+              onChange={(value) => handleUpdate(value, record)}
             >
               <Option value="IT">IT</Option>
               <Option value="Mechanic">Mechanic </Option>
-              <Option value="Electriciy"> Electriciy</Option>
+              <Option value="Electricity"> Electricity</Option>
             </Select>
           );
         }
@@ -118,16 +137,15 @@ const DisplayUsersPage = () => {
       key: "actions",
       render: (text, record) => (
         <div>
-          <Button type="primary" onClick={() => handleUpdate(record)}>
-            Update
-          </Button>{" "}
           <Popconfirm
             title="Are you sure to delete?"
             onConfirm={() => handleDelete(record)}
             okText="Yes"
             cancelText="No"
           >
-            <Button type="danger">Delete</Button>
+            <Button type="primary" danger>
+              Delete
+            </Button>
           </Popconfirm>
         </div>
       ),

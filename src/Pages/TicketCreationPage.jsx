@@ -30,7 +30,7 @@ export const TicketCreationPage = () => {
       const response = await Axios.post("/tickets", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          "authorization":window.localStorage.getItem("token")
+          authorization: window.localStorage.getItem("token"),
         },
       });
       console.log("Ticket created:", response.data.ticket);
@@ -61,14 +61,14 @@ export const TicketCreationPage = () => {
           label="Title"
           rules={[{ required: true, message: "Please enter a title" }]}
         >
-          <Input />
+          <Input id="ticket-title" data-testid="ticket-title" />
         </Form.Item>
         <Form.Item
           name="type"
           label="Type"
           rules={[{ required: true, message: "Please select a type" }]}
         >
-          <Select>
+          <Select id="ticket-type" data-testid="ticket-type">
             <Option value="electricity">Electricity</Option>
             <Option value="mechanic">Mechanic</Option>
             <Option value="it">IT</Option>
@@ -79,9 +79,12 @@ export const TicketCreationPage = () => {
           label="Description"
           rules={[{ required: true, message: "Please enter a description" }]}
         >
-          <Input.TextArea />
+          <Input.TextArea
+            id="ticket-description"
+            data-testid="ticket-description"
+          />
         </Form.Item>
-        <Form.Item name="images" label="Images">
+        <Form.Item name="images" label="Images" data-testid="ticket-images">
           <Upload
             fileList={fileList}
             onChange={handleFileChange}

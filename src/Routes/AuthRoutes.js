@@ -7,6 +7,7 @@ import { TicketCreationPage } from "../Pages/TicketCreationPage";
 import { TicketList } from "../Pages/TicketList";
 import { isAuthenticated, getCurrentUser } from "../Config/auth";
 import DisplayUsersPage from "../Pages/DisplayUsersPage";
+import DisplayTicketPage from "../Pages/DisplayTicketPage";
 
 export const AuthRoutes = () => {
   const isLoggedIn = isAuthenticated();
@@ -33,6 +34,10 @@ export const AuthRoutes = () => {
         path="/ticketList"
         element={isLoggedIn ? <TicketList /> : <Navigate to="/login" />}
       />
+        <Route
+            path="/ticket/:id"
+            element={isLoggedIn ? <DisplayTicketPage /> : <Navigate to="/login" />}
+        />
 
       <Route
         path="/add-user"
